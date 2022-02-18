@@ -1,11 +1,10 @@
 #!/bin/sh
 
+# Work in Progress - not functional
 # Creates the necassary commands for Minecraft to create the Avo's
 # Journey (https://www.youtube.com/channel/UCeprnLp3l8oZPAig8XjVLnA)
 # XP Farm
-# $1: x coordinate
-# $2: y coordinate
-# $3: z coordinate
+# Currently only for Bedrock
 #
 #  Created by fex on 17/02/2022.
 #
@@ -25,7 +24,8 @@ ENCLOSE="FALSE"
 # z: = z coordinate (south(+) <-> north(-))
 # <o>: = orientation (south, west, north or east), default is south
 # <d>: = set flag to delete the structure
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete Country House]"
+# <b>: = set flag to generate output for Bedrock
+USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete the structure] [-b (optional) set for Bedrock Edition]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1

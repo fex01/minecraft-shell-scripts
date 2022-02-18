@@ -2,11 +2,8 @@
 
 # Creates the necassary commands for Minecraft to create a Teleport
 # Room at a given position
-# $1: x coordinate
-# $2: y coordinate
-# $3: z coordinate
 #
-#  Created by Felix Miske on 03/10/2018.
+#  Created by fex on 03/10/2018.
 #
 
 X=""

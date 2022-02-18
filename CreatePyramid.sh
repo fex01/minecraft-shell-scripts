@@ -3,7 +3,7 @@
 # Creates the necassary commands for Minecraft build a Pyramid with a given position
 # as middle and a given number of levels.
 #
-#  Created by Felix Miske on 11/10/2018.
+#  Created by fex on 11/10/2018.
 #
 
 X=""

@@ -10,7 +10,7 @@
 #  command fires instantly, your player is teleported to the given location
 #  and later setblock orders might no longer be executed!
 #
-#  Created by Felix Miske on 09.10.18.
+#  Created by fex on 09.10.18.
 #  
 
 X=""

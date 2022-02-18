@@ -3,7 +3,7 @@
 # Creates the necassary commands for Minecraft to build an Elevator
 # (Seen at https://www.youtube.com/watch?v=sOtMqXB5xcY by PanCave)	
 #
-#  Created by Felix Miske on 14/10/2018.
+#  Created by fex on 14/10/2018.
 #
 
 X=""

@@ -6,7 +6,7 @@
 # $2: y coordinate
 # $3: z coordinate
 #
-#  Created by Felix Miske on 01/12/2019.
+#  Created by fex on 01/12/2019.
 #
 
 X=""

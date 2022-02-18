@@ -10,7 +10,7 @@
 #  might cause problems if you, for example, use a teleport command and your
 #  player is teleported before the end of your script.
 #
-#  Created by Felix Miske on 09.10.18.
+#  Created by fex on 09.10.18.
 #  
 
 X=""

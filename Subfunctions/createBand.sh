@@ -5,7 +5,7 @@
 #  Lines an horizontale rectangle with a given block type.
 #  An offset can be set to change the effected area.
 #
-#  Created by Felix Miske on 09.10.18.
+#  Created by fex on 09.10.18.
 #  
 
 X1=""
