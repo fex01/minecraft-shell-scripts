@@ -59,6 +59,6 @@ cd </wherever/I/have/my/minecraft-scripts>
 ```
 (Parameter for orientation south can be skippt since south is the default orientation)
 
-After the script finished writing Minecraft commands just copy the whole text and paste it into your Minecraft Server Console. I would recommend to be in the game watching the coordinates to make sure that the chunks are loaded - and it might be fun the see the structure being createt in just a few seconds :-)
+After the script finished writing Minecraft commands just copy the whole text and paste it into your Minecraft Server Console. I would recommend to be in the game watching the coordinates to make sure that the chunks are loaded - and it might be fun the see the structure being created in just a few seconds :-)
 
 And if the structure is not to your liking just delete it with pasting the result of `./CreateXPFarm.sh -x 14 -y 60 -z -73 -d -b`
