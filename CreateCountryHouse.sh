@@ -2,9 +2,8 @@
 
 # Creates the necassary commands for Minecraft to create a Country
 # House at a given position
-# $1: x coordinate
-# $2: y coordinate
-# $3: z coordinate
+# * Java (default)
+# * Bedrock (-b)
 #
 #  Created by fex on 01/12/2019.
 #
@@ -23,7 +22,7 @@ EDITION="java"
 # z: = z coordinate (south(+) <-> north(-))
 # <o>: = orientation (south, west, north or east), default is south
 # <d>: = set flag to delete the structure, value: replacement block type
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete Country House] [-b (optional) set for Bedrock Edition]"
+USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete the structure] [-b (optional) set for Bedrock Edition]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1

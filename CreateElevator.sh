@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # Creates the necassary commands for Minecraft to build an Elevator
-# (Seen at https://www.youtube.com/watch?v=sOtMqXB5xcY by PanCave)	
+# (Seen at https://www.youtube.com/watch?v=sOtMqXB5xcY by PanCave)
+# * Java only
 #
 #  Created by fex on 14/10/2018.
 #
@@ -17,7 +18,7 @@ DELETE=false
 # y: = y coordinate (up <-> down)
 # z: = z koordinate (south <-> north)
 # <d>: = set flag to delete the builing
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-h height] [-d (optional) to delete pyramid]"
+USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-h height] [-d (optional) to delete the structure]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1

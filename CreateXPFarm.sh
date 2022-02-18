@@ -15,7 +15,7 @@ Z=""
 ORIENTATION="north"
 DELETE="FALSE"
 BLOCK=""
-EDITION="java"
+EDITION="bedrock"
 ENCLOSE="FALSE"
 
 # Read parameters
