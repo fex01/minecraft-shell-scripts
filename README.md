@@ -7,6 +7,7 @@ These scripts generate text to build structures in Minecraft - just copy / pipe 
  * the older scripts (*Elevator*, *Pyramid*, *TeleporterRoom*) where written for the Java version
  * *CountryHouse* can also produce output for Bedrock (flag `-b`)
  * in general you will find a comment in the script telling you if the script is compatible with Java, Bedrock or both
+
 (Yes, this would be possible via about every programming language - but I wanted to play around with shell scripts :grin:)
 
 ## How?
