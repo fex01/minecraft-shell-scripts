@@ -55,7 +55,7 @@ if [ "$Z1" = "" ]; then echo "First z coordinate missing"; exit 1; fi
 if [ "$X2" = "" ]; then echo "Second x coordinate missing"; exit 1; fi
 if [ "$Y2" = "" ]; then echo "Second y coordinate missing"; exit 1; fi
 if [ "$Z2" = "" ]; then echo "Second z coordinate missing"; exit 1; fi
-if [ "$GROUNDLEVEL" = "" ]; then GROUNDLEVEL=$(( $Y1 < $Y2 ? $Y1 : $Y2 ))
+if [ "$GROUNDLEVEL" = "" ]; then GROUNDLEVEL= $(($Y1 < $Y2 ? $Y1 : $Y2 ))
 
 
 # Establish that the first value is smaller than the second
@@ -71,27 +71,18 @@ if [  "$GROUNDLEVEL" -lt "$Y1" -o "$GROUNDLEVEL" -gt "$Y2" ]; then
 fi
 
 # start high, end low to avoid trouble with falling blocks over the affected area
-# north & south wall
-for x in $(seq $(($X2 - $OFFSET)) $(($X1 + $OFFSET))); do
-    for y in $(seq $(($Y2 - $OFFSET)) $(($Y1 + $OFFSET))); do
-        echo "setblock $x $y $(($Z2 - $OFFSET)) $BLOCK"
-        echo "setblock $x $y $(($Z1 + $OFFSET)) $BLOCK"
-    done
-done
+# north wall
+echo "fill $X1 $Y2 $Z1 $X1 $Y1 $Z2 $SIDEBLOCK"
+# south wall
+echo "fill $X2 $Y2 $Z1 $X2 $Y1 $Z2 $SIDEBLOCK"
+# west wall
+echo "fill $X1 $Y2 $Z1 $X2 $Y1 $Z1 $SIDEBLOCK"
+# east wall
+echo "fill $X1 $Y2 $Z2 $X2 $Y1 $Z2 $SIDEBLOCK"
+# ceiling
+echo "fill $X1 $Y2 $Z1 $X2 $Y2 $Z2 $ROOFBLOCK"
+# floor
+echo "fill $X1 $Y1 $Z1 $X2 $GROUNDLEVEL $Z2 $BOTTOMBLOCK"
 
-# west & east wall without corners
-for z in $(seq $(($Z2 - $OFFSET)) $(($Z1 + $OFFSET))); do
-    for y in $(seq $(($Y2 - $OFFSET)) $(($Y1 + $OFFSET))); do
-        echo "setblock $(($X2 - $OFFSET)) $y $z $BLOCK"
-        echo "setblock $(($X1 + $OFFSET)) $y $z $BLOCK"
-    done
-done
-
-# floor & ceiling without corners
-for x in $(seq $(($X2 - $OFFSET)) $(($X1 + $OFFSET))); do
-    for z in $(seq $(($Z2 - $OFFSET)) $(($Z1 + $OFFSET))); do
-        echo "setblock $x $(($Y2 - $OFFSET)) $z $BLOCK"
-        echo "setblock $x $(($Y1 + $OFFSET)) $z $BLOCK"
-    done
-done
+# needed to execute the last command
 echo""
