@@ -18,12 +18,12 @@ BLOCK="air"
 OFFSET="0"
 
 # Read parameters
-# u: = p1.x coordinate (east <-> west)
-# v: = p1.y coordinate (up <-> down)
-# w: = p1.z coordinate (south <-> north)
-# x: = p2.x coordinate (east <-> west)
-# y: = p2.y coordinate (up <-> down)
-# z: = p2.z coordinate (south <-> north)
+# u: = p1.x coordinate (east(+) <-> west(-))
+# v: = p1.y coordinate (up(+) <-> down(-))
+# w: = p1.z coordinate (south(+) <-> north(-))
+# x: = p2.x coordinate (east(+) <-> west(-))
+# y: = p2.y coordinate (up(+) <-> down(-))
+# z: = p2.z coordinate (south(+) <-> north(-))
 # <b>: = fill material, default is air
 # <o>: = offset, default is 0
 USAGE="Usage: $0 [-u first x_coord] [-v first y_coord] [-w first z_coord] [-x second x_coord] [-y second y_coord] [-z second z_coord] [-b block type of the fill material] [-o optional offset]"
@@ -59,27 +59,18 @@ if [ "$Y1" -gt "$Y2" ]; then temp=$Y2; Y2=$Y1; Y1=$temp; fi
 if [ "$Z1" -gt "$Z2" ]; then temp=$Z2; Z2=$Z1; Z1=$temp; fi
 
 # start high, end low to avoid trouble with falling blocks over the affected area
-# north & south wall
-for x in $(seq $(($X2 - $OFFSET)) $(($X1 + $OFFSET))); do
-    for y in $(seq $(($Y2 - $OFFSET)) $(($Y1 + $OFFSET))); do
-        echo "setblock $x $y $(($Z2 - $OFFSET)) $BLOCK"
-        echo "setblock $x $y $(($Z1 + $OFFSET)) $BLOCK"
-    done
-done
+# north wall
+echo "fill $(($X1 + $OFFSET)) $(($Y2 - $OFFSET)) $(($Z1 + $OFFSET)) $(($X1 + $OFFSET)) $(($Y1 + $OFFSET)) $(($Z2 - $OFFSET)) $BLOCK"
+# south wall
+echo "fill $(($X2 - $OFFSET)) $(($Y2 - $OFFSET)) $(($Z1 + $OFFSET)) $(($X2 - $OFFSET)) $(($Y1 + $OFFSET)) $(($Z2 - $OFFSET)) $BLOCK"
+# west wall
+echo "fill $(($X1 + $OFFSET)) $(($Y2 - $OFFSET)) $(($Z1 + $OFFSET)) $(($X2 - $OFFSET)) $(($Y1 + $OFFSET)) $(($Z1 + $OFFSET)) $BLOCK"
+# east wall
+echo "fill $(($X1 + $OFFSET)) $(($Y2 - $OFFSET)) $(($Z2 - $OFFSET)) $(($X2 - $OFFSET)) $(($Y1 + $OFFSET)) $(($Z2 - $OFFSET)) $BLOCK"
+# ceiling
+echo "fill $(($X1 + $OFFSET)) $(($Y2 - $OFFSET)) $(($Z1 + $OFFSET)) $(($X2 - $OFFSET)) $(($Y2 - $OFFSET)) $(($Z2 - $OFFSET)) $BLOCK"
+# floor
+echo "fill $(($X1 + $OFFSET)) $(($Y1 + $OFFSET)) $(($Z1 + $OFFSET)) $(($X2 - $OFFSET)) $(($Y1 + $OFFSET)) $(($Z2 - $OFFSET)) $BLOCK"
 
-# west & east wall without corners
-for z in $(seq $(($Z2 - $OFFSET)) $(($Z1 + $OFFSET))); do
-    for y in $(seq $(($Y2 - $OFFSET)) $(($Y1 + $OFFSET))); do
-        echo "setblock $(($X2 - $OFFSET)) $y $z $BLOCK"
-        echo "setblock $(($X1 + $OFFSET)) $y $z $BLOCK"
-    done
-done
-
-# floor & ceiling without corners
-for x in $(seq $(($X2 - $OFFSET)) $(($X1 + $OFFSET))); do
-    for z in $(seq $(($Z2 - $OFFSET)) $(($Z1 + $OFFSET))); do
-        echo "setblock $x $(($Y2 - $OFFSET)) $z $BLOCK"
-        echo "setblock $x $(($Y1 + $OFFSET)) $z $BLOCK"
-    done
-done
+# needed to execute the last command
 echo""

@@ -2,6 +2,7 @@
 
 # Creates the necassary commands for Minecraft to create a Teleport
 # Room at a given position
+# * Java only
 #
 #  Created by fex on 03/10/2018.
 #
@@ -19,7 +20,7 @@ BLOCK=""
 # z: = z koordinate (south <-> north)
 # <o>: = orientation (south, west, north or east), default is south
 # <d>: = set flag to delete the teleport room, value: block type
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete teleport room]"
+USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete the structure]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
