@@ -13,31 +13,32 @@ X=""
 Y=""
 Z=""
 ORIENTATION="north"
-DELETE="FALSE"
-BLOCK=""
 EDITION="java"
 ENCLOSE="FALSE"
+DELETE="FALSE"
+BLOCK=""
 
 # Read parameters
 # x: = x coordinate (east(+) <-> west(-))
 # y: = y coordinate (up(+) <-> down(-))
 # z: = z coordinate (south(+) <-> north(-))
 # <o>: = orientation (south, west, north or east), default is south
-# <d>: = set flag to delete the structure
 # <b>: = set flag to generate output for Bedrock
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete the structure] [-b (optional) set for Bedrock Edition]"
+# <u>: = set flag if you place the structure underground, will create an enclosure
+# <d>: = set flag to delete the structure
+USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-b (optional) set for Bedrock Edition] [-u (optional) set for underground placement] [-d (optional) to delete the structure]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
-while getopts ":x:y:z:o:db" VALUE "$@" ; do
+while getopts ":x:y:z:o:bud" VALUE "$@" ; do
     case "$VALUE" in
         x) X="$OPTARG";;
         y) Y="$OPTARG";;
         z) Z="$OPTARG";;
         o) ORIENTATION="$OPTARG";;
-        d) DELETE="TRUE"; BLOCK="air";;
         b) EDITION="bedrock";;
-        e) ENCLOSE="TRUE";;
+        u) ENCLOSE="TRUE";;
+        d) DELETE="TRUE"; BLOCK="air";;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
     esac
@@ -356,8 +357,23 @@ createTorchRing () {
     createBlock $1 $2 $(($3 - 1)) "$(getBlockValue wall_torch facing north)"
 }
 
+shiftStartPosition () {
+	# shift start position by 1 block back, necessary to provide space for enclosure
+	case $ORIENTATION in
+		north) Z=$(($Z + 1));;
+		south) Z=$(($Z - 1));;
+		west) X=$(($X + 1));;
+		east) X=$(($X - 1));;
+        *) "Orientation must be south, west, north or east."; exit 1
+    esac	
+}
+
 
 prepareArea () {
+	if [ $ENCLOSE ]; then
+		shiftStartPosition
+		./Subfunctions/createEnclosure.sh -u $(($(getOrientX $X) + $minLW)) -v $(($Y + $minY)) -w $(($(getOrientZ $Z) + $minCW)) -x $(($(getOrientX $X) + $maxLW)) -y $(($Y + $maxY)) -z $(($(getOrientX $X) + $maxCW)) -g $Y
+	fi
     printComment "Clear Area"
     createFill $minLW 0 $minCW $maxLW $maxY $maxCW "$(getBlockValue air)"
     printComment ""
