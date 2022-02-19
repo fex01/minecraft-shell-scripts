@@ -42,7 +42,7 @@ while getopts ":u:v:w:x:y:z:g:" VALUE "$@" ; do
         x) X2="$OPTARG";;
         y) Y2="$OPTARG";;
         z) Z2="$OPTARG";;
-        b) GROUNDLEVEL="$OPTARG";;
+        g) GROUNDLEVEL="$OPTARG";;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
     esac
@@ -55,7 +55,6 @@ if [ "$Z1" = "" ]; then echo "First z coordinate missing"; exit 1; fi
 if [ "$X2" = "" ]; then echo "Second x coordinate missing"; exit 1; fi
 if [ "$Y2" = "" ]; then echo "Second y coordinate missing"; exit 1; fi
 if [ "$Z2" = "" ]; then echo "Second z coordinate missing"; exit 1; fi
-if [ "$GROUNDLEVEL" = "" ]; then GROUNDLEVEL= $(($Y1 < $Y2 ? $Y1 : $Y2 ))
 
 
 # Establish that the first value is smaller than the second
@@ -79,10 +78,10 @@ echo "fill $X2 $Y2 $Z1 $X2 $Y1 $Z2 $SIDEBLOCK"
 echo "fill $X1 $Y2 $Z1 $X2 $Y1 $Z1 $SIDEBLOCK"
 # east wall
 echo "fill $X1 $Y2 $Z2 $X2 $Y1 $Z2 $SIDEBLOCK"
-# ceiling
-echo "fill $X1 $Y2 $Z1 $X2 $Y2 $Z2 $ROOFBLOCK"
-# floor
-echo "fill $X1 $Y1 $Z1 $X2 $GROUNDLEVEL $Z2 $BOTTOMBLOCK"
+# ceiling without sides
+echo "fill $(($X1 + 1)) $Y2 $(($Z1 + 1)) $(($X2 - 1)) $Y2 $(($Z2 - 1)) $ROOFBLOCK"
+# floor without sides
+echo "fill $(($X1 + 1)) $Y1 $(($Z1 + 1)) $(($X2 - 1)) $GROUNDLEVEL $(($Z2 - 1)) $BOTTOMBLOCK"
 
 # needed to execute the last command
 echo""
