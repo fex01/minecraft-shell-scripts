@@ -69,6 +69,7 @@ if [  "$GROUNDLEVEL" -lt "$Y1" -o "$GROUNDLEVEL" -gt "$Y2" ]; then
 	exit 1
 fi
 
+echo "say Create Enclosure"
 # start high, end low to avoid trouble with falling blocks over the affected area
 # north wall
 echo "fill $X1 $Y2 $Z1 $X1 $Y1 $Z2 $SIDEBLOCK"
