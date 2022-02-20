@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#  createEnclosure.sh
+# createEnclosure.sh
 #
 # Will enclose a given area from all sides.
 # Optional param g can be set to define a ground level higher than the
@@ -22,6 +22,7 @@ BOTTOMBLOCK="stone"
 SIDEBLOCK="stone"
 ROOFBLOCK="glowstone"
 ORIENTATION=""
+LIGHTBANDS="FALSE"
 
 # Read parameters
 # u: = p1.x coordinate (east(+) <-> west(-))
@@ -30,16 +31,17 @@ ORIENTATION=""
 # x: = p2.x coordinate (east(+) <-> west(-))
 # y: = p2.y coordinate (up <-> down)
 # z: = p2.z coordinate (south(+) <-> north(-))
-# <g>: = groundlevel, default is min(v, y)
-# <b>: = bottom block type
-# <s>: = sides block type
-# <r>: = roof block type
-# <o>: = orientation, generates a door hole in the middle of the south, west, north or east wall when set
-USAGE="Usage: $0 [-u first x_coord] [-v first y_coord] [-w first z_coord] [-x second x_coord] [-y second y_coord] [-z second z_coord] [-g (optional) raised groundlevel (in between v & y)] [-s (optional) sides block type] [-r (optional) roof block type] [-o (optional) orientation, generates a door hole in the middle of the south, west, north or east wall]"
+# <g>: = (optional) groundlevel, default is min(v, y)
+# <b>: = (optional) bottom block type
+# <s>: = (optional) sides block type
+# <r>: = (optional) roof block type
+# <o>: = (optional) orientation, generates a door hole in the middle of the south, west, north or east wall when set
+# <l>: = (optional) light bands in the walls every 5 blocks
+USAGE="Usage: $0 [-u first x_coord] [-v first y_coord] [-w first z_coord] [-x second x_coord] [-y second y_coord] [-z second z_coord] [-g (optional) raised groundlevel (in between v & y)] [-s (optional) sides block type] [-r (optional) roof block type] [-o (optional) orientation, generates a door hole in the middle of the south, west, north or east wall] [-l (optional) light bands]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
-while getopts ":u:v:w:x:y:z:g:b:s:r:o:" VALUE "$@" ; do
+while getopts ":u:v:w:x:y:z:g:b:s:r:o:l" VALUE "$@" ; do
     case "$VALUE" in
         u) X1="$OPTARG";;
         v) Y1="$OPTARG";;
@@ -52,6 +54,7 @@ while getopts ":u:v:w:x:y:z:g:b:s:r:o:" VALUE "$@" ; do
         s) SIDEBLOCK="$OPTARG";;
         r) ROOFBLOCK="$OPTARG";;
         o) ORIENTATION="$OPTARG";;
+        l) LIGHTBANDS="TRUE";;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
     esac
@@ -130,7 +133,12 @@ case $ORIENTATION in
     *) "ORIENTATION must be empty, south, west, north or east."; exit 1
 esac
 echo "fill $tempX $(($GROUNDLEVEL + 1)) $tempZ $tempX $(($GROUNDLEVEL + 2)) $tempZ air"
-
+if [ "$LIGHTBANDS" ]
+then
+    for ((i="$(($GROUNDLEVEL + 5))";i<"$Y2";i=$(($i + 5)))); do
+        ./Subfunctions/createBand.sh -u "$X1" -w "$Z1" -x "$X2" -z "$Z2" -y "$i" -b glowstone
+    done
+fi
 
 # needed to execute the last command
-echo""
+echo "say "
