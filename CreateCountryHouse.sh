@@ -2,8 +2,8 @@
 
 # Creates the necassary commands for Minecraft to create a Country
 # House at a given position
-# * Java (default)
-# * Bedrock (-b)
+# * Java (-j)
+# * Bedrock (default)
 #
 #  Created by fex on 01/12/2019.
 #
@@ -14,26 +14,32 @@ Z=""
 ORIENTATION="north"
 DELETE="FALSE"
 BLOCK=""
-EDITION="java"
+EDITION="bedrock"
+ENCLOSE="FALSE"
+DELETE="FALSE"
+BLOCK="air"
 
 # Read parameters
 # x: = x coordinate (east(+) <-> west(-))
 # y: = y coordinate (up(+) <-> down(-))
 # z: = z coordinate (south(+) <-> north(-))
 # <o>: = orientation (south, west, north or east), default is south
-# <d>: = set flag to delete the structure, value: replacement block type
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-d (optional) to delete the structure] [-b (optional) set for Bedrock Edition]"
+# <d>: = set flag to delete the structure, value: replacement block type (default air)
+# <j>: = (optional) set flag to generate output for Java
+# <u>: = (optional) set flag if you place the structure underground, will create an enclosure
+USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientation] [-j (optional) set for Java Edition] [-u (optional) set for underground placement] [-d (optional) to delete the structure]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
-while getopts ":x:y:z:o:db" VALUE "$@" ; do
+while getopts ":x:y:z:o:jud" VALUE "$@" ; do
     case "$VALUE" in
         x) X="$OPTARG";;
         y) Y="$OPTARG";;
         z) Z="$OPTARG";;
         o) ORIENTATION="$OPTARG";;
-        d) DELETE="TRUE"; BLOCK="$(getBlockValue air)";;
-        b) EDITION="bedrock";;
+        j) EDITION="java";;
+        u) ENCLOSE="TRUE";;
+        d) DELETE="TRUE"; BLOCK="$OPTARG";;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
     esac
@@ -56,12 +62,12 @@ printComment () {
 
 
 # outer edges
-minLW="-13"
-maxLW="13"
+minLW="-14"
+maxLW="14"
 minY="0"
-maxY="18"
-minCW="0"
-maxCW="25"
+maxY="19"
+minCW="-1"
+maxCW="26"
 
 
 getOrientX () {
@@ -88,84 +94,13 @@ getOrientZ () {
 }
 
 
-getFacing () {
-    orientationArray=(north west south east)
-    chestOrientation=(2 4 3 5)
-    furnaceOrientation=(2 4 3 5)
-    javaOrientation=(north west south east)
-    ladderOrientation=(2 4 3 5)
-    stairsOrientation=(3 1 2 0)
-    torchOrientation=(4 2 3 1)
-    trapdoorOrientation=(1 3 0 2)
-    facing=""
-
-    case $1 in
-        furnace) orientationMapping=("${furnaceOrientation[@]}");;
-        ladder) orientationMapping=("${ladderOrientation[@]}");;
-        *stairs) orientationMapping=("${stairsOrientation[@]}");;
-        torch) orientationMapping=("${torchOrientation[@]}");;
-        *trapdoor) orientationMapping=("${trapdoorOrientation[@]}");;
-    esac
-
-    if [ $EDITION = "java" ]; then 
-        orientationMapping=("${javaOrientation[@]}")
-    fi
-
-    case $ORIENTATION in
-        north) 
-            for index in "${!orientationArray[@]}"; do
-                if [ "${orientationArray[$index]}" = "$2" ]; then
-                    facing="${orientationMapping[$index]}"
-                fi
-            done
-            ;;
-        west) 
-            for index in "${!orientationArray[@]}"; do
-                if [ "${orientationArray[$index]}" = "$2" ]; then
-                    temp="$(($index + 1))"
-                    if [ $temp -gt 3 ]; then
-                        temp="$(($temp - 4))"
-                    fi
-                    facing="${orientationMapping[$temp]}"
-                fi
-            done
-            ;;
-        south) 
-            for index in "${!orientationArray[@]}"; do
-                if [ "${orientationArray[$index]}" = "$2" ]; then
-                    temp="$(($index + 2))"
-                    if [ $temp -gt 3 ]; then
-                        temp="$(($temp - 4))"
-                    fi
-                    facing="${orientationMapping[$temp]}"
-                fi
-            done
-            ;;
-        east) 
-            for index in "${!orientationArray[@]}"; do
-                if [ "${orientationArray[$index]}" = "$2" ]; then
-                    temp="$(($index + 3))"
-                    if [ $temp -gt 3 ]; then
-                        temp="$(($temp - 4))"
-                    fi
-                    facing="${orientationMapping[$temp]}"
-                fi
-            done
-            ;;
-        *) "Orientation must be south, west, north or east."; exit 1
-    esac
-
-    echo "$facing"
-}
-
-
 getBlockModifier () {
     modifier=""
     block="$1"
     shift
 
     if [ "$1" = "facing" ]; then
-        modifier="$(getFacing $block $2)"
+        modifier="$(./Subfunctions/getFacing.sh -b $block -f $2 -o $ORIENTATION -e $EDITION)"
         if [ "$EDITION" = "java" ]; then 
             modifier="facing=$modifier"
             if [ -n "$3" ]; then modifier="$modifier,"; fi
@@ -221,7 +156,7 @@ getBlockValue () {
     modifier=""
     shift
 
-    # getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true
+    # getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true
     # getBlockValue oak_door facing east half upper hinge right
     # getBlockValue wall_torch facing west
     # getBlockValue torch
@@ -262,6 +197,10 @@ getBlockValue () {
             polished_andesite)
                 block="stone"
                 modifier="6"
+                ;;
+            smooth_quartz)
+                block="quartz_block"
+                modifier="3"
                 ;;
             stone_bricks)
                 block="double_stone_slab"
@@ -351,8 +290,23 @@ createTorchRing () {
     createBlock $1 $2 $(($3 - 1)) "$(getBlockValue wall_torch facing north)"
 }
 
+shiftStartPosition () {
+	# shift start position by 1 block back, necessary to provide space for enclosure
+	case $ORIENTATION in
+		north) Z=$(($Z + 1));;
+		south) Z=$(($Z - 1));;
+		west) X=$(($X + 1));;
+		east) X=$(($X - 1));;
+        *) "Orientation must be south, west, north or east."; exit 1
+    esac	
+}
+
 
 prepareArea () {
+	if [ $ENCLOSE ]; then
+		shiftStartPosition
+		./Subfunctions/createEnclosure.sh -u $(getOrientX $minLW) -v $(($Y + $minY)) -w $(getOrientZ $minCW) -x $(getOrientX $maxLW) -y $(($Y + $maxY)) -z $(getOrientZ $maxCW) -g $Y -b "$(getBlockValue smooth_quartz)" -s "$(getBlockValue smooth_quartz)" -r "$(getBlockValue glowstone)" -o "$ORIENTATION" -l
+	fi
     printComment "Clear Area"
     createFill $minLW $minY $minCW $maxLW $maxY $maxCW "$(getBlockValue air)"
     printComment ""
@@ -719,46 +673,46 @@ createBackPorch () {
 setWindowsAndDoors () {
     printComment "setWindowsAndDoors"
     # left
-    createFill 11 2 6 11 3 6 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 2 10 11 3 10 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 2 14 11 3 14 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 2 18 11 3 18 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 8 6 11 9 6 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 8 10 11 9 10 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 8 14 11 9 14 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill 11 8 18 11 9 18 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
+    createFill 11 2 6 11 3 6 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 2 10 11 3 10 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 2 14 11 3 14 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 2 18 11 3 18 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 8 6 11 9 6 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 8 10 11 9 10 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 8 14 11 9 14 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill 11 8 18 11 9 18 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
 
     # back
-    createFill 9 2 20 7 3 20 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
+    createFill 9 2 20 7 3 20 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
     createBlock 3 1 20 "$(getBlockValue oak_door facing north hinge right)"
     createBlock 3 2 20 "$(getBlockValue oak_door facing north half upper hinge right)"
     createBlock -3 1 20 "$(getBlockValue oak_door facing north)"
     createBlock -3 2 20 "$(getBlockValue oak_door facing north half upper)"
-    createFill -7 2 20 -9 3 20 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill 9 8 20 7 9 20 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill 3 8 20 1 9 20 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill -1 8 20 -3 9 20 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill -7 8 20 -9 9 20 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
+    createFill -7 2 20 -9 3 20 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill 9 8 20 7 9 20 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill 3 8 20 1 9 20 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill -1 8 20 -3 9 20 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill -7 8 20 -9 9 20 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
 
     # right
-    createFill -11 2 6 -11 3 6 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 2 10 -11 3 10 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 2 14 -11 3 14 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 2 18 -11 3 18 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 8 6 -11 9 6 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 8 10 -11 9 10 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 8 14 -11 9 14 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
-    createFill -11 8 18 -11 9 18 "$(getBlockValue glass_pane $(getFacing "" north) true $(getFacing "" south) true)"
+    createFill -11 2 6 -11 3 6 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 2 10 -11 3 10 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 2 14 -11 3 14 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 2 18 -11 3 18 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 8 6 -11 9 6 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 8 10 -11 9 10 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 8 14 -11 9 14 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
+    createFill -11 8 18 -11 9 18 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f north -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f south -o $ORIENTATION -e $EDITION) true)"
 
     # front
-    createFill 3 2 4 3 3 4 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
+    createFill 3 2 4 3 3 4 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
     createBlock 0 1 4 "$(getBlockValue oak_door facing south)"
     createBlock 0 2 4 "$(getBlockValue oak_door facing south half upper)"
-    createFill -3 2 4 -3 3 4 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill -7 2 4 -9 3 4 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill 9 8 4 7 9 4 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill 2 8 4 -2 9 4 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
-    createFill -7 8 4 -9 9 4 "$(getBlockValue glass_pane $(getFacing "" east) true $(getFacing "" west) true)"
+    createFill -3 2 4 -3 3 4 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill -7 2 4 -9 3 4 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill 9 8 4 7 9 4 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill 2 8 4 -2 9 4 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
+    createFill -7 8 4 -9 9 4 "$(getBlockValue glass_pane $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true)"
 
     # indoor
     createBlock 2 1 12 "$(getBlockValue oak_door facing east)"
