@@ -15,8 +15,8 @@ ORIENTATION="north"
 DELETE="FALSE"
 BLOCK=""
 EDITION="bedrock"
-ENCLOSE="FALSE"
-DELETE="FALSE"
+ENCLOSE=""
+DELETE=""
 BLOCK="air"
 
 # Read parameters
@@ -31,7 +31,7 @@ USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord] [-o (optional) orientati
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
-while getopts ":x:y:z:o:jud" VALUE "$@" ; do
+while getopts ":x:y:z:o:jud:" VALUE "$@" ; do
     case "$VALUE" in
         x) X="$OPTARG";;
         y) Y="$OPTARG";;
@@ -306,9 +306,18 @@ prepareArea () {
 	if [ $ENCLOSE ]; then
 		shiftStartPosition
 		./Subfunctions/createEnclosure.sh -u $(getOrientX $minLW) -v $(($Y + $minY)) -w $(getOrientZ $minCW) -x $(getOrientX $maxLW) -y $(($Y + $maxY)) -z $(getOrientZ $maxCW) -g $Y -b "$(getBlockValue smooth_quartz)" -s "$(getBlockValue smooth_quartz)" -r "$(getBlockValue glowstone)" -o "$ORIENTATION" -l
+        if [ $DELETE ]; then
+            # change outer edeges to include enclosure
+            minLW="$(($minLW - 1))"
+            maxLW="$(($maxLW + 1))"
+            minY="$(($minY - 1))"
+            maxY=$(($maxY + 1))
+            minCW="$(($minCW - 1))"
+            maxCW="$(($maxCW + 1))"
+        fi
 	fi
     printComment "Clear Area"
-    createFill $minLW $minY $minCW $maxLW $maxY $maxCW "$(getBlockValue air)"
+    createFill $minLW $minY $minCW $maxLW $maxY $maxCW "$BLOCK"
     printComment ""
 }
 
@@ -808,7 +817,7 @@ printComment "Create Country House at position $X/$Y/$Z facing $ORIENTATION"
 printComment ""
 prepareArea
 
-if [ "$DELETE" = "TRUE" ]; then exit 0; fi
+if [ "$DELETE" ]; then exit 0; fi
 
 createFoundation
 createFramework
@@ -825,4 +834,4 @@ createStairs
 createChimney
 setHouseholdItems
 printComment "Finished"
-echo ""
+printComment ""
