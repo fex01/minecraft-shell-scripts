@@ -47,20 +47,16 @@ if [ "$X1" = "" ]; then echo "First x coordinate missing"; exit 1; fi
 if [ "$Z1" = "" ]; then echo "First z coordinate missing"; exit 1; fi
 if [ "$X2" = "" ]; then echo "Second x coordinate missing"; exit 1; fi
 if [ "$Z2" = "" ]; then echo "Second z coordinate missing"; exit 1; fi
-if [ "$Y" = "" ]; then echo "Second y coordinate missing"; exit 1; fi
+if [ "$Y" = "" ]; then echo "y coordinate missing"; exit 1; fi
 
 # Establish that the first value is smaller than the second
 if [ "$X1" -gt "$X2" ]; then temp=$X2; X2=$X1; X1=$temp; fi
 if [ "$Z1" -gt "$Z2" ]; then temp=$Z2; Z2=$Z1; Z1=$temp; fi
 
+echo "fill $X1 $Y $Z1 $X1 $Y $Z2 $BLOCK"
+echo "fill $X2 $Y $Z1 $X2 $Y $Z2 $BLOCK"
+echo "fill $X1 $Y $Z1 $X2 $Y $Z1 $BLOCK"
+echo "fill $X1 $Y $Z2 $X2 $Y $Z2 $BLOCK"
 
-for x in $(seq $(($X2 - $OFFSET)) $(($X1 + $OFFSET))); do
-    echo "setblock $x $Y $(($Z1 + $OFFSET)) $BLOCK"
-    echo "setblock $x $Y $(($Z2 - $OFFSET)) $BLOCK"
-done
-
-for z in $(seq $(($Z2 - $OFFSET - 1)) $(($Z1 + $OFFSET + 1))); do
-    echo "setblock $(($X1 + $OFFSET)) $Y $z $BLOCK"
-    echo "setblock $(($X2 - $OFFSET)) $Y $z $BLOCK"
-done
-echo""
+# needed to execute the last command
+echo "say "
