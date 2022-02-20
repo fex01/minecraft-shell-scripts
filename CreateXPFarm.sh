@@ -12,10 +12,7 @@
 X=""
 Y=""
 Z=""
-ORIENTATION="north"
-EDITION="java"
-DELETE="FALSE"
-BLOCK=""
+ORIENTATION="south"
 EDITION="bedrock"
 ENCLOSE="FALSE"
 DELETE="FALSE"
@@ -272,6 +269,10 @@ getBlockValue () {
                 block="stone"
                 modifier="6"
                 ;;
+            smooth_quartz)
+                block="quartz_block"
+                modifier="3"
+                ;;
             stone_bricks)
                 block="double_stone_slab"
                 modifier="5"
@@ -375,7 +376,7 @@ shiftStartPosition () {
 prepareArea () {
 	if [ $ENCLOSE ]; then
 		shiftStartPosition
-		./Subfunctions/createEnclosure.sh -u $(($(getOrientX $X) + $minLW)) -v $(($Y + $minY)) -w $(($(getOrientZ $Z) + $minCW)) -x $(($(getOrientX $X) + $maxLW)) -y $(($Y + $maxY)) -z $(($(getOrientX $X) + $maxCW)) -g $Y
+		./Subfunctions/createEnclosure.sh -u $(getOrientX $minLW) -v $(($Y + $minY)) -w $(getOrientZ $minCW) -x $(getOrientX $maxLW) -y $(($Y + $maxY)) -z $(getOrientZ $maxCW) -g $Y -b "$(getBlockValue smooth_quartz)" -s "$(getBlockValue smooth_quartz)" -r "$(getBlockValue glowstone)" -o "$ORIENTATION"
 	fi
     printComment "Clear Area"
     createFill $minLW 0 $minCW $maxLW $maxY $maxCW "$(getBlockValue air)"
