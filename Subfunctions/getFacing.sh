@@ -11,14 +11,14 @@
 
 BLOCK=""
 FACING=""
-ORIENTATION=""
-EDITION=""
+ORIENTATION="south"
+EDITION="bedrock"
 
 # Read parameters
 # <b>: = (optional) block type
 # f: = block facing (south, west, north or east)
-# o: = structure orientation (south, west, north or east)
-# e: = Minecraft edition (java, bedrock)
+# <o>: = (optional) orientation (south, west, north or east), default is south
+# <e>: = (optional) Minecraft edition (java, bedrock), default is bedrock
 USAGE="Usage: $0 [-b (optional) block type] [-f block facing] [-o structure orientation] [-e Minecraft edition (java, bedrock)]"
 # Start processing options at index 1.
 OPTIND=1
@@ -63,6 +63,7 @@ trapdoorOrientation=(1 3 0 2)
 facing=""
 
 case $BLOCK in
+    chest) orientationMapping=("${chestOrientation[@]}");;
     furnace) orientationMapping=("${furnaceOrientation[@]}");;
     ladder) orientationMapping=("${ladderOrientation[@]}");;
     *stairs) orientationMapping=("${stairsOrientation[@]}");;

@@ -1,60 +1,70 @@
 #!/bin/sh
 
 # Get the correct block string depending on Edition, modifiers & orientation.
-# * Java (-j)
-# * Bedrock (default)
+#
+# Examples:
+# ./Subfunctions/getBlockValue -b glass_pane -o $ORIENTATION -e $EDITION \
+#   -a $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true \
+#   $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true
+# ./Subfunctions/getBlockValue -b oak_door -a facing east half upper hinge right
+# ./Subfunctions/getBlockValue -b wall_torch -o $ORIENTATION -a facing west 
+# ./Subfunctions/getBlockValue -b torch -o $ORIENTATION -e $EDITION
+# ./Subfunctions/getBlockValue -b birch_stairs \
+#   -o $ORIENTATION -e $EDITION \
+#   -a facing west shape outer_left
 #
 #  Created by fex on 21/02/2022.
 #
 
-ORIENTATION="south"
 BLOCK=""
+ORIENTATION="south"
 EDITION="bedrock"
-ARGS=""
+ARGS=()
+MODIFIER=""
 
 # Read parameters
-# x: = x coordinate (east(+) <-> west(-))
-# y: = y coordinate (up(+) <-> down(-))
-# z: = z coordinate (south(+) <-> north(-))
-# <o>: = orientation (south, west, north or east), default is south
-# <d>: = set flag to delete the structure, value: replacement block type 
-#   (default air)
-# <j>: = (optional) set flag to generate output for Java
-# <u>: = (optional) set flag if you place the structure underground, will 
-#   create an enclosure
-USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord]
-    [-o (optional) orientation] [-j (optional) set for Java Edition]
-    [-u (optional) set for underground placement]
-    [-d (optional) to delete the structure]"
+# b: = block name (according to Java Edition)
+# <a>: = (optional) array of block modifiers
+# <o>: = (optional) orientation (south, west, north or east), default is south
+# <e>: = (optional) Minecraft edition (java, bedrock), default is bedrock
+USAGE="Usage: $0 [-b block name (according to Java Edition)]
+    [-a (optional) array of block modifiers]
+    [-o (optional) orientation (south, west, north or east), default is south]
+    [-e (optional) Minecraft edition (java, bedrock), default is bedrock]"
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
-while getopts ":x:y:z:o:jud:" VALUE "$@" ; do
+while getopts ":b:o:e:a:" VALUE "$@" ; do
     case "$VALUE" in
-        x) X="$OPTARG";;
-        y) Y="$OPTARG";;
-        z) Z="$OPTARG";;
+        b) BLOCK="$OPTARG";;
         o) ORIENTATION="$OPTARG";;
-        j) EDITION="java";;
-        u) ENCLOSE="TRUE";;
-        d) DELETE="TRUE"; BLOCK="$OPTARG";;
+        e) EDITION="$OPTARG";;
+        a) ARGS=( "${@:$((OPTIND - 1))}" );;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
     esac
 done
 
+
 # Verify parameters
-if [ "$X" = "" ]; then echo "x coordinate missing"; exit 1; fi
-if [ "$Y" = "" ]; then echo "y coordinate missing"; exit 1; fi
-if [ "$Z" = "" ]; then echo "z coordinate missing"; exit 1; fi
-if [ "$ORIENTATION" != "south" ] &&\
-    [ "$ORIENTATION" != "west" ] &&\
-    [ "$ORIENTATION" != "north" ] &&\
-    [ "$ORIENTATION" != "east" ]
-then
-    echo "Orientation must be south, west, north or east."
+if [ "$BLOCK" = "" ]; then echo "block name (-b) missing"; exit 1; fi
+if ! [[ "$BLOCK" =~ ^[a-z_]+$ ]]
+then 
+    echo "\"$BLOCK\" (-b) is not a valid block name"
     exit 1
 fi
+if [ "$ORIENTATION" != "south" ] && [ "$ORIENTATION" != "west" ] &&\
+    [ "$ORIENTATION" != "north" ] && [ "$ORIENTATION" != "east" ]
+then
+    echo "Orientation must be unset (defaults to south), south, west, north or east."
+    exit 1
+fi
+if [ "$EDITION" != "java" ] && [ "$EDITION" != "bedrock" ]
+then
+    echo "Edition (-e) must be unset (defaults to bedrock), java or bedrock"
+    exit 1
+fi
+
 
 getBlockModifier () {
     modifier=""
@@ -118,80 +128,68 @@ getBlockModifier () {
 }
 
 
-
-block="$1"
-modifier=""
-shift
-
-# getBlockValue glass_pane \
-#   $(./Subfunctions/getFacing.sh -f east -o $ORIENTATION -e $EDITION) true\
-#   $(./Subfunctions/getFacing.sh -f west -o $ORIENTATION -e $EDITION) true
-# getBlockValue oak_door facing east half upper hinge right
-# getBlockValue wall_torch facing west
-# getBlockValue torch
-# getBlockValue birch stairs facing west shape outer_left
-
 # convert block name if Bedrock Edition
 if [ $EDITION = "bedrock" ]; then
-    case $block in
-        acacia_log) block="log2";;
+    case $BLOCK in
+        acacia_log) BLOCK="log2";;
         birch_planks)
-            block="planks"
-            modifier="2"
+            BLOCK="planks"
+            MODIFIER="2"
             ;;
-        bricks) block="brick_block";;
+        bricks) BLOCK="brick_block";;
         brick_slab)
-            block="stone_slab"
-            modifier="4"
+            BLOCK="stone_slab"
+            MODIFIER="4"
             ;;
         dark_oak_planks)
-            block="planks"
-            modifier="5"
+            BLOCK="planks"
+            MODIFIER="5"
             ;;
         dark_oak_slab)
-            block="wooden_slab"
-            modifier="5"
+            BLOCK="wooden_slab"
+            MODIFIER="5"
             ;;
-        oak_door) block="wooden_door";;
-        oak_fence) block="fence";;
-        oak_planks) block="planks";;
+        oak_door) BLOCK="wooden_door";;
+        oak_fence) BLOCK="fence";;
+        oak_planks) BLOCK="planks";;
         oak_slab) 
-            block="wooden_slab"
-            if [ "$2" = "double" ]; then
-                block="$2_$block"
-                shift 2
+            BLOCK="wooden_slab"
+            if [ ${#ARGS[@]} -ge 2 ] && [ "${ARGS[1]}" = "double" ]; then
+                BLOCK="${ARGS[1]}_$BLOCK"
+                ARGS=("${ARGS[@]:2}")
             fi
             ;;
-        oak_trapdoor) block="wooden_trapdoor";;
+        oak_trapdoor) BLOCK="wooden_trapdoor";;
         polished_andesite)
-            block="stone"
-            modifier="6"
+            BLOCK="stone"
+            MODIFIER="6"
             ;;
         smooth_quartz)
-            block="quartz_block"
-            modifier="3"
+            BLOCK="quartz_block"
+            MODIFIER="3"
             ;;
         stone_bricks)
-            block="double_stone_slab"
-            modifier="5"
+            BLOCK="double_stone_slab"
+            MODIFIER="5"
             ;;
         stone_brick_slab)
-            block="stone_slab"
-            modifier="5"
+            BLOCK="stone_slab"
+            MODIFIER="5"
             ;;
-        wall_torch) block="torch";;
+        wall_torch) BLOCK="torch";;
     esac
 fi
 
+
 # calculate modifier
 if [ $EDITION = "java" ]; then
-    modifier="$(getBlockModifier $block $@)"
+    MODIFIER="$(getBlockModifier $BLOCK ${ARGS[@]})"
 else
-    temp="$(getBlockModifier $block $@)"
+    temp="$(getBlockModifier $BLOCK ${ARGS[@]})"
     if [ -n "$temp" ]; then 
-        modifier="$(($modifier + $(getBlockModifier $block $@)))"
+        MODIFIER="$(($MODIFIER + $(getBlockModifier $BLOCK ${ARGS[@]})))"
     fi
-    if [ -n "$modifier" ]; then modifier=" $modifier"; fi
+    if [ -n "$MODIFIER" ]; then MODIFIER=" $MODIFIER"; fi
 fi
 
-echo "$block$modifier"
+echo "$BLOCK$MODIFIER"
