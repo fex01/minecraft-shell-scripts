@@ -2,7 +2,7 @@
 
 # Place a block taking orientation and offset into account
 #
-#  Created by fex on 23.02.2022
+# Created by fex on 23.02.2022
 #
 
 X=""
@@ -49,8 +49,9 @@ if [ "$X" = "" ]; then echo "x coordinate is missing"; exit 1; fi
 if [ "$Y" = "" ]; then echo "y coordinate is missing"; exit 1; fi
 if [ "$Z" = "" ]; then echo "z coordinate is missing"; exit 1; fi
 if [ "$XOFFSET" = "" ]; then echo "x offset (-u) is missing"; exit 1; fi
-if [ "$YOFFSET" = "" ]; then echo "y offset (-v) is  missing"; exit 1; fi
-if [ "$ZOFFSET" = "" ]; then echo "z offset (-w) is  missing"; exit 1; fi
+if [ "$YOFFSET" = "" ]; then echo "y offset (-v) is missing"; exit 1; fi
+if [ "$ZOFFSET" = "" ]; then echo "z offset (-w) is missing"; exit 1; fi
+if [ "$BLOCK" = "" ]; then echo "block (-b) is  missing"; exit 1; fi
 if [ "$ORIENTATION" != "south" ] &&\
     [ "$ORIENTATION" != "west" ] &&\
     [ "$ORIENTATION" != "north" ] &&\
