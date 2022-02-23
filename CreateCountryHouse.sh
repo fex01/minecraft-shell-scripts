@@ -168,13 +168,17 @@ createCrossBeam () {
 }
 
 createTorchRing () {
-    createBlock $(($1 - 1)) $2 $3 "$(./Subfunctions/getBlockValue.sh \
+    ./Subfunctions/createBlock.sh -x $X -y $Y -z $z -u $(($1 - 1)) -v $2 -w $3 \
+        -b "$(./Subfunctions/getBlockValue.sh \
         -o $ORIENTATION -e $EDITION -b wall_torch -a facing west)"
-    createBlock $1 $2 $(($3 + 1)) "$(./Subfunctions/getBlockValue.sh \
+    ./Subfunctions/createBlock.sh -x $X -y $Y -z $z -u $1 -v $2 -w $(($3 + 1)) \
+        -b "$(./Subfunctions/getBlockValue.sh \
         -o $ORIENTATION -e $EDITION -b wall_torch -a facing south)"
-    createBlock $(($1 + 1)) $2 $3 "$(./Subfunctions/getBlockValue.sh \
+    ./Subfunctions/createBlock.sh -x $X -y $Y -z $z -u $(($1 + 1)) -v $2 -w $3 \
+        -b "$(./Subfunctions/getBlockValue.sh \
         -o $ORIENTATION -e $EDITION -b wall_torch -a facing east)"
-    createBlock $1 $2 $(($3 - 1)) "$(./Subfunctions/getBlockValue.sh \
+    ./Subfunctions/createBlock.sh -x $X -y $Y -z $z -u $1 -v $2 -w $(($3 - 1)) \
+        -b "$(./Subfunctions/getBlockValue.sh \
         -o $ORIENTATION -e $EDITION -b wall_torch -a facing north)"
 }
 
