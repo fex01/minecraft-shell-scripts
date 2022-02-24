@@ -13,20 +13,19 @@ Y=""
 Z=""
 ORIENTATION="south"
 EDITION="bedrock"
-ENCLOSE=""
-DELETE=""
+ENCLOSE="FALSE"
+DELETE="FALSE"
 BLOCK="air"
 
 # Read parameters
 # x: = x coordinate (east(+) <-> west(-))
 # y: = y coordinate (up(+) <-> down(-))
 # z: = z coordinate (south(+) <-> north(-))
-# <o>: = orientation (south, west, north or east), default is south
-# <d>: = set flag to delete the structure, value: replacement block type 
-#   (default air)
+# <o>: = (optional) orientation (south, west, north or east), default is south
 # <j>: = (optional) set flag to generate output for Java
 # <u>: = (optional) set flag if you place the structure underground, will 
 #   create an enclosure
+# <d>: = (optional) set flag to delete the structure
 USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord]
     [-o (optional) orientation] [-j (optional) set for Java Edition]
     [-u (optional) set for underground placement]
@@ -34,15 +33,15 @@ USAGE="Usage: $0 [-x x_coord] [-y y_coord] [-z z_coord]
 # Start processing options at index 1.
 OPTIND=1
 # OPTERR=1
-while getopts ":x:y:z:o:jud:" VALUE "$@" ; do
+while getopts ":x:y:z:o:jud" VALUE "$@" ; do
     case "$VALUE" in
         x) X="$OPTARG";;
         y) Y="$OPTARG";;
         z) Z="$OPTARG";;
         o) ORIENTATION="$OPTARG";;
         j) EDITION="java";;
-        u) ENCLOSE="TRUE";;
-        d) DELETE="TRUE"; BLOCK="$OPTARG";;
+        u) ENCLOSE="TRUE"; BLOCK="stone";;
+        d) DELETE="TRUE";;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
     esac
@@ -57,7 +56,7 @@ if [ "$ORIENTATION" != "south" ] &&
     [ "$ORIENTATION" != "north" ] && 
     [ "$ORIENTATION" != "east" ]
 then
-    echo "Orientation must be south, west, north or east."
+    echo "Orientation must be unset, south, west, north or east."
     exit 1
 fi
 
@@ -68,6 +67,7 @@ printComment () {
 
 
 # outer edges
+# LW: Lengthwise, CW: Crosswise
 minLW="-14"
 maxLW="14"
 minY="0"
