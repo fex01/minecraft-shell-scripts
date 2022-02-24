@@ -195,28 +195,40 @@ shiftStartPosition () {
 
 
 prepareArea () {
-	if [ $ENCLOSE ]; then
-		shiftStartPosition
-		./Subfunctions/createEnclosure.sh -u $(getOrientX $minLW) \
-            -v $(($Y+$minY)) -w $(getOrientZ $minCW) -x $(getOrientX $maxLW) \
-            -y $(($Y+$maxY)) -z $(getOrientZ $maxCW) -g $Y\
-            -b "$(getBlockValue smooth_quartz)" \
-            -s "$(getBlockValue smooth_quartz)" \
-            -r "$(getBlockValue glowstone)" -o "$ORIENTATION" -l
-        if [ $DELETE ]; then
-            # change outer edeges to include enclosure
+    printComment "Clear Area"
+    if [ "$DELETE" = "TRUE" ]; then
+        if [ "$ENCLOSE" = "TRUE" ]; then
+        # change outer edeges to include enclosure
             minLW="$(($minLW-1))"
             maxLW="$(($maxLW+1))"
             minY="$(($minY-1))"
             maxY=$(($maxY+1))
             minCW="$(($minCW-1))"
             maxCW="$(($maxCW+1))"
+            createFill $minLW $minY $minCW $maxLW $maxY $maxCW "stone"
+        else
+            if [ $minY -lt 0 ]; then
+                createFill $minLW $minY $minCW $maxLW -1 $maxCW "stone"
+            fi
+            createFill $minLW 0 $minCW $maxLW $maxY $maxCW "air"
         fi
-	fi
-    printComment "Clear Area"
-    if [ $DELETE ] && [ $ENCLOSE ]; then BLOCK="stone"; fi
-    createFill $minLW $minY $minCW $maxLW $maxY $maxCW "$BLOCK"
-    printComment ""
+        printComment ""
+        exit 0
+    else
+        if [ "$ENCLOSE" = "TRUE" ]; then
+            shiftStartPosition
+            ./Subfunctions/createEnclosure.sh -u $(getOrientX $minLW) \
+                -v $(($Y+$minY)) -w $(getOrientZ $minCW) -x $(getOrientX $maxLW) \
+                -y $(($Y+$maxY)) -z $(getOrientZ $maxCW) -g $Y\
+                -b "$(getBlockValue smooth_quartz)" \
+                -s "$(getBlockValue smooth_quartz)" \
+                -r "$(getBlockValue glowstone)" -o "$ORIENTATION" -l
+            createFill $minLW 0 $minCW $maxLW $maxY $maxCW "air"
+        else
+            createFill $minLW $minY $minCW $maxLW $maxY $maxCW "air"
+        fi
+        printComment ""
+    fi
 }
 
 
