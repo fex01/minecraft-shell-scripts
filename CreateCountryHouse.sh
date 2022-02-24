@@ -40,7 +40,7 @@ while getopts ":x:y:z:o:jud" VALUE "$@" ; do
         z) Z="$OPTARG";;
         o) ORIENTATION="$OPTARG";;
         j) EDITION="java";;
-        u) ENCLOSE="TRUE"; BLOCK="stone";;
+        u) ENCLOSE="TRUE";;
         d) DELETE="TRUE";;
         :) echo "$USAGE"; exit 1;;
         ?)echo "Unknown flag -$OPTARG detected."; echo "$USAGE"; exit 1
@@ -214,6 +214,7 @@ prepareArea () {
         fi
 	fi
     printComment "Clear Area"
+    if [ $DELETE ] && [ $ENCLOSE ]; then BLOCK="stone"; fi
     createFill $minLW $minY $minCW $maxLW $maxY $maxCW "$BLOCK"
     printComment ""
 }
