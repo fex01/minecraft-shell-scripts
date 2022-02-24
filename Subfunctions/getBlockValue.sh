@@ -24,7 +24,7 @@ MODIFIER=""
 
 # Read parameters
 # b: = block name (according to Java Edition)
-# <a>: = (optional) array of block modifiers
+# <a>: = (optional) one to multiple block modifiers
 # <o>: = (optional) orientation (south, west, north or east), default is south
 # <e>: = (optional) Minecraft edition (java, bedrock), default is bedrock
 USAGE="Usage: $0 [-b block name (according to Java Edition)]
