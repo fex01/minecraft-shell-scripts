@@ -53,6 +53,7 @@ fi
 
 
 orientationArray=(north west south east)
+comparatorOrientation=(0 3 2 1)
 defaultBedrockOrientation=(2 4 3 5)
 javaOrientation=(north west south east)
 stairsOrientation=(3 1 2 0)
@@ -64,6 +65,7 @@ case $BLOCK in
     chest|furnace|hopper|ladder) 
         orientationMapping=("${defaultBedrockOrientation[@]}")
         ;;
+    comparator) orientationMapping=("${comparatorOrientation[@]}");;
     *stairs) orientationMapping=("${stairsOrientation[@]}");;
     torch|lever) orientationMapping=("${torchOrientation[@]}");;
     *trapdoor) orientationMapping=("${trapdoorOrientation[@]}");;
