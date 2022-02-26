@@ -38,9 +38,11 @@ done
 if [ "$FACING" != "south" ] && 
     [ "$FACING" != "west" ] && 
     [ "$FACING" != "north" ] && 
-    [ "$FACING" != "east" ]
+    [ "$FACING" != "east" ] && 
+    [ "$FACING" != "up" ] && 
+    [ "$FACING" != "down" ]
 then
-    echo "BLOCK FACING (-f) must be south, west, north or east."
+    echo "BLOCK FACING (-f) must be south, west, north, east, up or down."
     exit 1
 fi
 if [ "$ORIENTATION" != "south" ] && 

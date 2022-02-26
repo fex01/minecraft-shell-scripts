@@ -85,10 +85,10 @@ getBlockModifier () {
     # change rail modifier depending on $ORIENTATION
     if [ "$1" = shape ]; then
         temp="${2%_*}"
-        if [ "$temp" != ascending]; then 
+        if [ "$temp" != ascending ]; then 
             temp="$(./Subfunctions/getFacing.sh -f $temp)"
         fi
-        2="${temp}_$(./Subfunctions/getFacing.sh -f ${2#*_})"
+        modifier="${temp}_$(./Subfunctions/getFacing.sh -f ${2#*_})"
     fi
 
     if [ "$EDITION" = "java" ]; then
@@ -128,7 +128,7 @@ getBlockModifier () {
                 level) modifier="$2";;
                 powered) modifier="$(($modifier + 8))";;
                 shape)
-                    case $2 in
+                    case $modifier in
                         north_south) modifier="0";;
                         east_west) modifier="1";;
                         ascending_east) modifier="2";;
@@ -139,7 +139,8 @@ getBlockModifier () {
                         south_west) modifier="7";;
                         north_west) modifier="8";;
                         north_east) modifier="9";;
-                        *) echo "Unknown combination block=$block, $1=$2"
+                        *) echo "Unknown combination block=$block, $1=$2 -> \
+                            $modifier"
                             exit 1
                     esac
                     ;;

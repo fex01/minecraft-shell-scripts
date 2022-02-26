@@ -188,6 +188,7 @@ prepareArea () {
 
 
 buildStructure () {
+    printComment "build structure"
     createFill -4 -1 -1 -3 -1 -3 air
     createFill -4 -2 -2 -3 -2 -3 air
     createFill -4 -3 -3 -3 -3 -3 air
@@ -246,10 +247,12 @@ buildStructure () {
     createFill 7 0 -14 8 0 -14 "$(getBlockValue chest facing south)"
     createBlock 6 0 -14 "$(getBlockValue hopper facing east)"
     createFill 6 1 -14 7 1 -14 "$(getBlockValue chest facing south)"
+    printComment ""
 }
 
 
 layRails () {
+    printComment "lay rails"
     createFill -4 1 -5 4 1 -5 "$(getBlockValue powered_rail shape east_west)"
     createFill 5 1 -5 6 1 -5 "$(getBlockValue rail shape east_west)"
     createBlock 7 1 -5 "$(getBlockValue rail shape north_west)"
@@ -267,28 +270,33 @@ layRails () {
     createBlock -6 0 -5 "$(getBlockValue rail shape north_east)"
     createBlock -6 -1 -6 "$(getBlockValue powered_rail shape ascending_south)"
     createBlock -6 -2 -7 "$(getBlockValue powered_rail shape ascending_south)"
-    createFill -6 -2 -8 -6 -2 -9 "$(getBlockValue powered_rail shape north_south)"
+    createFill -6 -2 -8 -6 -2 -9 "$(getBlockValue powered_rail shape \
+        north_south)"
     createBlock -6 -2 -10 "$(getBlockValue dectector_rail shape ascending_north)"
     createBlock 8 -1 -9 "$(getBlockValue powered_rail shape ascending_south)"
     createBlock 8 -2 -10 "$(getBlockValue powered_rail shape ascending_south)"
-    createFill 8 -2 -11 8 -2 -12 "$(getBlockValue powered_rail shape north_south)"
+    createFill 8 -2 -11 8 -2 -12 "$(getBlockValue powered_rail shape \
+        north_south)"
     createBlock 8 -2 -13 "$(getBlockValue dectector_rail shape ascending_north)"
+    printComment ""
 }
 
 
 wireUp () {
-    createBlock -7 -2 -12 "$(getBlockValue redstone_wire ${getFacing east} side \
-        ${getFacing south} side)"
+    printComment "Clear Area"
+    createBlock -7 -2 -12 "$(getBlockValue redstone_wire $(getFacing east) side \
+        $(getFacing south) side)"
     createFill -6 2 -10 -6 2 -12 "$(getBlockValue redstone_wire \
-        ${getFacing north} side ${getFacing south} side)"
-    createBlock -6 1 -13 "$(getBlockValue redstone_wire ${getFacing north} side \
-        ${getFacing south} up)"
-    createBlock 9 -2 -15 "$(getBlockValue redstone_wire ${getFacing south} side \
-        ${getFacing west} side)"
+        $(getFacing north) side $(getFacing south) side)"
+    createBlock -6 1 -13 "$(getBlockValue redstone_wire $(getFacing north) side \
+        $(getFacing south) up)"
+    createBlock 9 -2 -15 "$(getBlockValue redstone_wire $(getFacing south) side \
+        $(getFacing west) side)"
     createFill 8 2 -13 8 2 -15 "$(getBlockValue redstone_wire \
-        ${getFacing north} side ${getFacing south} side)"
-    createBlock 8 1 -16 "$(getBlockValue redstone_wire ${getFacing north} side \
-        ${getFacing south} up)"
+        $(getFacing north) side $(getFacing south) side)"
+    createBlock 8 1 -16 "$(getBlockValue redstone_wire $(getFacing north) side \
+        $(getFacing south) up)"
+    printComment ""
 }
 
 
