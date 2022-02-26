@@ -6,7 +6,7 @@
 # XP Farm
 # Currently only for Bedrock
 #
-#  Created by fex on 17/02/2022.
+# Created by fex on 17/02/2022.
 #
 
 X=""
@@ -187,98 +187,117 @@ prepareArea () {
 }
 
 
+buildStructure () {
+    createFill -4 -1 -1 -3 -1 -3 air
+    createFill -4 -2 -2 -3 -2 -3 air
+    createFill -4 -3 -3 -3 -3 -3 air
+    createFill -4 -3 -4 -3 -1 -4 "$(getBlockValue chest facing west)"
+    createFill -2 -3 -4 -2 -1 -4 "$(getBlockValue hopper facing west)"
+    createFill -1 -1 -4 5 -1 -4 "$(getBlockValue hopper facing west)"
+    createFill -4 0 -5 -2 0 -6 stone
+    createBlock -2 0 -4 stone
+    createFill -4 1 -4 -2 1 -4 stone
+    createBlock -4 1 -6 stone
+    createFill -1 0 -4 5 0 -4 "$(getBlockValue furnace facing south)"
+    createFill -1 0 -3 5 0 -3 "$(getBlockValue lever facing south)"
+    createFill -1 1 -4 5 1 -4 "$(getBlockValue hopper)"
+    createFill -1 0 -5 5 0 -6 "$(getBlockValue hopper facing south)"
+    createFill 6 0 -5 8 0 -6 stone
+    createFill 8 1 -5 8 1 -4 stone
+    createFill 6 1 -4 7 1 -4 stone
+    createBlock 8 0 -7 stone
+    createBlock 5 2 -4 stone
+    createBlock -4 0 -4 "$(getBlockValue lever facing south powered true)"
+    createBlock -5 2 -3 "$(getBlockValue lever facing south powered true)"
+    createBlock -4 1 -7 "$(getBlockValue lever facing north powered true)"
+    createBlock -6 -2 -6 redstone_block
+    createFill -6 -1 -7 -6 -1 -10 air
+    createBlock -6 -1 -11 "$(getBlockValue hopper facing south)"
+    createBlock -6 -2 -12 "$(getBlockValue comparator facing south)"
+    createBlock -7 -2 -10 "$(getBlockValue hopper)"
+    createBlock -7 -2 -11 "$(getBlockValue comparator facing south)"
+    createBlock -6 -1 -13 "$(getBlockValue redstone_torch)"
+    createBlock -7 -2 -9 air
+    createBlock -6 0 -13 stone
+    createFill -6 1 -10 -6 1 -12 stone
+    createBlock -6 1 -9 "$(getBlockValue sticky_piston facing down)"
+    createBlock -6 0 -9 stone
+    fillHoper -7 -2 -10 46 stone
+    createBlock -5 -1 -11 "$(getBlockValue hopper facing west)"
+    createFill -4 0 -11 -5 0 -11 "$(getBlockValue chest facing south)"
+    createBlock -3 0 -11 "$(getBlockValue hopper facing west)"
+    createFill -3 1 -11 -4 1 -11 "$(getBlockValue chest facing south)"
+    createBlock -2 1 -11 "$(getBlockValue hopper facing west)"
+    createFill -2 2 -11 -3 1 -11 "$(getBlockValue chest facing south)"
+    createBlock 8 -2 -9 redstone_block
+    createFill 8 -1 -10 8 -1 -13 air
+    createBlock 8 -1 -14 "$(getBlockValue hopper facing south)"
+    createBlock 8 -2 -15 "$(getBlockValue comparator facing south)"
+    createBlock 9 -2 -13 "$(getBlockValue hopper)"
+    createBlock 9 -2 -14 "$(getBlockValue comparator facing south)"
+    createBlock 8 -1 -16 "$(getBlockValue redstone_torch)"
+    createBlock 9 -2 -12 air
+    createBlock 8 0 -16 stone
+    createFill 8 1 -13 8 1 -15 stone
+    createBlock 8 1 -12 "$(getBlockValue sticky_piston facing down)"
+    createBlock 8 0 -12 stone
+    fillHoper 9 -2 -13 23 stone
+    createBlock 8 -1 -14 "$(getBlockValue hopper facing east)"
+    createFill 7 0 -14 8 0 -14 "$(getBlockValue chest facing south)"
+    createBlock 6 0 -14 "$(getBlockValue hopper facing east)"
+    createFill 6 1 -14 7 1 -14 "$(getBlockValue chest facing south)"
+}
+
+
+layRails () {
+    createFill -4 1 -5 4 1 -5 "$(getBlockValue powered_rail shape east_west)"
+    createFill 5 1 -5 6 1 -5 "$(getBlockValue rail shape east_west)"
+    createBlock 7 1 -5 "$(getBlockValue rail shape north_west)"
+    createBlock 7 1 -6 "$(getBlockValue rail shape south_west)"
+    createFill -1 1 -6 6 1 -6 "$(getBlockValue rail shape east_west)"
+    createFill -3 1 -6 -2 1 -6 "$(getBlockValue powered_rail shape east_west)"
+    createBlock -5 0 -5 "$(getBlockValue powered_rail shape ascending_east)"
+    createFill -4 2 -4 -2 2 -4 "$(getBlockValue powered_rail shape east_west)"
+    createFill -1 2 -4 7 2 -4 "$(getBlockValue rail shape east_west)"
+    createBlock 8 2 -4 "$(getBlockValue rail shape north_west)"
+    createBlock 8 2 -5 "$(getBlockValue rail shape north_south)"
+    createBlock 8 2 -6 "$(getBlockValue powered_rail shape ascending_south)"
+    createBlock 8 1 -7 "$(getBlockValue powered_rail shape ascending_south)"
+    createBlock 8 0 -8 "$(getBlockValue powered_rail shape ascending_south)"
+    createBlock -6 0 -5 "$(getBlockValue rail shape north_east)"
+    createBlock -6 -1 -6 "$(getBlockValue powered_rail shape ascending_south)"
+    createBlock -6 -2 -7 "$(getBlockValue powered_rail shape ascending_south)"
+    createFill -6 -2 -8 -6 -2 -9 "$(getBlockValue powered_rail shape north_south)"
+    createBlock -6 -2 -10 "$(getBlockValue dectector_rail shape ascending_north)"
+    createBlock 8 -1 -9 "$(getBlockValue powered_rail shape ascending_south)"
+    createBlock 8 -2 -10 "$(getBlockValue powered_rail shape ascending_south)"
+    createFill 8 -2 -11 8 -2 -12 "$(getBlockValue powered_rail shape north_south)"
+    createBlock 8 -2 -13 "$(getBlockValue dectector_rail shape ascending_north)"
+}
+
+
+wireUp () {
+    createBlock -7 -2 -12 "$(getBlockValue redstone_wire ${getFacing east} side \
+        ${getFacing south} side)"
+    createFill -6 2 -10 -6 2 -12 "$(getBlockValue redstone_wire \
+        ${getFacing north} side ${getFacing south} side)"
+    createBlock -6 1 -13 "$(getBlockValue redstone_wire ${getFacing north} side \
+        ${getFacing south} up)"
+    createBlock 9 -2 -15 "$(getBlockValue redstone_wire ${getFacing south} side \
+        ${getFacing west} side)"
+    createFill 8 2 -13 8 2 -15 "$(getBlockValue redstone_wire \
+        ${getFacing north} side ${getFacing south} side)"
+    createBlock 8 1 -16 "$(getBlockValue redstone_wire ${getFacing north} side \
+        ${getFacing south} up)"
+}
+
+
 printComment "Create XP Farm at position $X/$Y/$Z facing $ORIENTATION"
 printComment ""
 prepareArea
-
-createFill -4 -1 -1 -3 -1 -3 air
-createFill -4 -2 -2 -3 -2 -3 air
-createFill -4 -3 -3 -3 -3 -3 air
-createFill -4 -3 -4 -3 -1 -4 chest facing west
-createFill -2 -3 -4 -2 -1 -4 hopper facing west
-createFill -1 -1 -4 5 -1 -4 hopper facing west
-createFill -4 0 -5 -2 0 -6 stone
-createBlock -2 0 -4 stone
-createFill -4 1 -4 -2 1 -4 stone
-createBlock -4 1 -6 stone
-createFill -1 0 -4 5 0 -4 furnace facing south
-createFill -1 0 -3 5 0 -3 lever attached north
-createFill -1 1 -4 5 1 -4 hopper facing down
-createFill -1 0 -5 5 0 -6 hopper facing south
-createFill 6 0 -5 8 0 -6 stone
-createFill 8 1 -5 8 1 -4 stone
-createFill 6 1 -4 7 1 -4 stone
-createBlock 8 0 -7 stone
-createBlock 5 2 -4 stone
-createFill -4 1 -5 4 1 -5 powered_rail e/w
-createFill 5 1 -5 6 1 -5 rail e/w
-createBlock 7 1 -5 rail w/n
-createBlock 7 1 -6 rail s/w
-createFill -1 1 -6 6 1 -6 rail e/w
-createFill -3 1 -6 -2 1 -6 powered_rail e/w
-createBlock -5 0 -5 powered_rail e+/w-
-createFill -4 2 -4 -2 2 -4 powered_rail e/w
-createFill -1 2 -4 7 2 -4 rail e/w
-createBlock 8 2 -4 rail w/n
-createBlock 8 2 -5 rail n/s
-createBlock 8 2 -6 powered_rail n-/s+
-createBlock 8 1 -7 powered_rail n-/s+
-createBlock 8 0 -8 powered_rail n-/s+
-createBlock -4 0 -4 lever attached north activated
-createBlock -5 2 -3 lever attached north activated
-createBlock -4 1 -7 lever attached south activated
-createBlock -6 0 -5 rail e/n
-createBlock -6 -2 -6 redstone_block
-createBlock -6 -1 -6 powered_rail n-/s+
-createFill -6 -1 -7 -6 -1 -10 air
-createBlock -6 -2 -7 powered_rail n-/s+
-createFill -6 -2 -8 -6 -2 -9 powered_rail n/s
-createBlock -6 -2 -10 dectector_rail n+/s-
-createBlock -6 -1 -11 hopper facing south
-createBlock -6 -2 -12 comparator facing south
-createBlock -7 -2 -10 hopper facing down
-createBlock -7 -2 -11 comparator facing south
-createBlock -6 -1 -13 redstone_torch attached down
-createBlock -7 -2 -12 redstone_dust connecting e/s
-createBlock -7 -2 -9 air
-createBlock -6 0 -13 stone
-createFill -6 1 -10 -6 1 -12 stone
-createBlock -6 1 -9 sticky_piston facing down
-createBlock -6 0 -9 stone
-createFill -6 2 -10 -6 2 -12 redstone_dust connecting n/s
-createBlock -6 1 -13 redstone_dust connecting n/s+
-fillHoper -7 -2 -10 46 stone
-createBlock -5 -1 -11 hopper facing west
-createFill -4 0 -11 -5 0 -11 chest facing south
-createBlock -3 0 -11 hopper facing west
-createFill -3 1 -11 -4 1 -11 chest facing south
-createBlock -2 1 -11 hopper facing west
-createFill -2 2 -11 -3 1 -11 chest facing south
-
-createBlock 8 -2 -9 redstone_block
-createBlock 8 -1 -9 powered_rail n-/s+
-createFill 8 -1 -10 8 -1 -13 air
-createBlock 8 -2 -10 powered_rail n-/s+
-createFill 8 -2 -11 8 -2 -12 powered_rail n/s
-createBlock 8 -2 -13 dectector_rail n+/s-
-createBlock 8 -1 -14 hopper facing south
-createBlock 8 -2 -15 comparator facing south
-createBlock 9 -2 -13 hopper facing down
-createBlock 9 -2 -14 comparator facing south
-createBlock 8 -1 -16 redstone_torch attached down
-createBlock 9 -2 -15 redstone_dust connecting w/s
-createBlock 9 -2 -12 air
-createBlock 8 0 -16 stone
-createFill 8 1 -13 8 1 -15 stone
-createBlock 8 1 -12 sticky_piston facing down
-createBlock 8 0 -12 stone
-createFill 8 2 -13 8 2 -15 redstone_dust connecting n/s
-createBlock 8 1 -16 redstone_dust connecting n/s+
-fillHoper 9 -2 -13 23 stone
-createBlock 8 -1 -14 hopper facing east
-createFill 7 0 -14 8 0 -14 chest facing south
-createBlock 6 0 -14 hopper facing east
-createFill 6 1 -14 7 1 -14 chest facing south
+buildStructure
+layRails
+wireUp
 
 
 printComment "Finished"
