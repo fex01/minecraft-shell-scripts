@@ -82,6 +82,17 @@ getBlockModifier () {
         shift 2
     fi
 
+    # change rail modifier depending on $ORIENTATION
+    if [ "$1" = shape ]; then
+        temp="${2%_*}"
+        if [ "$temp" != ascending]; then 
+            temp="$(./Subfunctions/getFacing.sh -b $block -f $temp \
+            -o $ORIENTATION -e $EDITION)"
+        fi
+        2="${temp}_$(./Subfunctions/getFacing.sh -b $block -f ${2#*_} \
+            -o $ORIENTATION -e $EDITION)"
+    fi
+
     if [ "$EDITION" = "java" ]; then
         # until $1 is empty
         until [ -z "$1" ]; do
@@ -110,11 +121,30 @@ getBlockModifier () {
                             ;;
                         *stairs) modifier="$(($modifier + 4))";;
                         *trapdoor) modifier="$(($modifier + 4))";;
+                        *) echo "Unknown combination block=$block," \
+                            "modifier=half"
+                            exit 1
                     esac
                     ;;
                 hollow) return;;
                 level) modifier="$2";;
                 powered) modifier="$(($modifier + 8))";;
+                shape)
+                    case $2 in
+                        north_south) modifier="0";;
+                        east_west) modifier="1";;
+                        ascending_east) modifier="2";;
+                        ascending_west) modifier="3";;
+                        ascending_north) modifier="4";;
+                        ascending_south) modifier="5";;
+                        south_east) modifier="6";;
+                        south_west) modifier="7";;
+                        north_west) modifier="8";;
+                        north_east) modifier="9";;
+                        *) echo "Unknown combination block=$block, $1=$2"
+                            exit 1
+                    esac
+                    ;;
                 type)
                     if [[ $block == *slab ]]; then
                         modifier="$(($modifier + 8))"
