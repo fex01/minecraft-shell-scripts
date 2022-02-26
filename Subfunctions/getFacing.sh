@@ -53,21 +53,19 @@ fi
 
 
 orientationArray=(north west south east)
-chestOrientation=(2 4 3 5)
-furnaceOrientation=(2 4 3 5)
+defaultBedrockOrientation=(2 4 3 5)
 javaOrientation=(north west south east)
-ladderOrientation=(2 4 3 5)
 stairsOrientation=(3 1 2 0)
 torchOrientation=(4 2 3 1)
 trapdoorOrientation=(1 3 0 2)
 facing=""
 
 case $BLOCK in
-    chest) orientationMapping=("${chestOrientation[@]}");;
-    furnace) orientationMapping=("${furnaceOrientation[@]}");;
-    ladder) orientationMapping=("${ladderOrientation[@]}");;
+    chest|furnace|hopper|ladder) 
+        orientationMapping=("${defaultBedrockOrientation[@]}")
+        ;;
     *stairs) orientationMapping=("${stairsOrientation[@]}");;
-    torch) orientationMapping=("${torchOrientation[@]}");;
+    torch|lever) orientationMapping=("${torchOrientation[@]}");;
     *trapdoor) orientationMapping=("${trapdoorOrientation[@]}");;
 esac
 
