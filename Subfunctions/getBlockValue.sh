@@ -86,11 +86,9 @@ getBlockModifier () {
     if [ "$1" = shape ]; then
         temp="${2%_*}"
         if [ "$temp" != ascending]; then 
-            temp="$(./Subfunctions/getFacing.sh -b $block -f $temp \
-            -o $ORIENTATION -e $EDITION)"
+            temp="$(./Subfunctions/getFacing.sh -f $temp)"
         fi
-        2="${temp}_$(./Subfunctions/getFacing.sh -b $block -f ${2#*_} \
-            -o $ORIENTATION -e $EDITION)"
+        2="${temp}_$(./Subfunctions/getFacing.sh -f ${2#*_})"
     fi
 
     if [ "$EDITION" = "java" ]; then
@@ -194,6 +192,13 @@ if [ $EDITION = "bedrock" ]; then
         polished_andesite)
             BLOCK="stone"
             MODIFIER="6"
+            ;;
+        redstone_torch)
+            if [ ${#ARGS[@]} -ge 2 ] && [ "${ARGS[1]}" = "false" ]; then
+                BLOCK="unlit_redstone_torch"
+                ARGS=("${ARGS[@]:2}")
+            fi
+            MODIFIER="5"
             ;;
         smooth_quartz)
             BLOCK="quartz_block"
