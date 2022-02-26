@@ -114,6 +114,7 @@ getBlockModifier () {
                     ;;
                 hollow) return;;
                 level) modifier="$2";;
+                powered) modifier="$(($modifier + 8))";;
                 type)
                     if [[ $block == *slab ]]; then
                         modifier="$(($modifier + 8))"
