@@ -66,6 +66,32 @@ then
 fi
 
 
+getShape () {
+    orient1="$1"
+    orient2="$2"
+    shape=""
+
+    case "$orient1" in
+        north|ascending)
+            shape="${orient1}_$orient2"
+            ;;
+        west)
+            shape="${orient2}_$orient1"
+            ;;
+        south)
+            if [ "$orient2" = "north" ]; then shape="${orient2}_$orient1"
+            else shape="${orient1}_$orient2"; fi
+            ;;
+        east)
+            if [ "$orient2" = "west" ]; then shape="${orient1}_$orient2"
+            else shape="${orient2}_$orient1"; fi
+            ;;
+    esac
+    echo "$shape"
+    exit 0
+}
+
+
 getBlockModifier () {
     modifier=""
     block="$1"
@@ -88,7 +114,7 @@ getBlockModifier () {
         if [ "$temp" != ascending ]; then 
             temp="$(./Subfunctions/getFacing.sh -f $temp)"
         fi
-        modifier="${temp}_$(./Subfunctions/getFacing.sh -f ${2#*_})"
+        modifier="$(getShape $temp $(./Subfunctions/getFacing.sh -f ${2#*_}))"
     fi
 
     if [ "$EDITION" = "java" ]; then
