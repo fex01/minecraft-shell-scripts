@@ -114,7 +114,7 @@ tempX=""
 tempZ=""
 case $ORIENTATION in
     north)
-        tempX="$(($X1 + (($X2 - $X1) / 2)))"
+        tempX="$(($X1 + (($X2 - $X1) / 2) - 1))"
         tempZ="$Z1"
         ;;
     south)
@@ -133,8 +133,7 @@ case $ORIENTATION in
     *) "ORIENTATION must be empty, south, west, north or east."; exit 1
 esac
 echo "fill $tempX $(($GROUNDLEVEL + 1)) $tempZ $tempX $(($GROUNDLEVEL + 2)) $tempZ air"
-if [ "$LIGHTBANDS" ]
-then
+if [ "$LIGHTBANDS" = "TRUE" ]; then
     for ((i="$(($GROUNDLEVEL + 5))";i<"$Y2";i=$(($i + 5)))); do
         ./Subfunctions/createBand.sh -u "$X1" -w "$Z1" -x "$X2" -z "$Z2" -y "$i" -b glowstone
     done
